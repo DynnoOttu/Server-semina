@@ -29,9 +29,45 @@ const find = async (req, res, next) => {
         const {id} = req.params
 
         const result = await Categories.findOne({_id: id})
-        es.status(200).json({
+
+        res.status(200).json({
             data: result,
         })
+    } catch (err) {
+        return res.status(400).json({
+            message: 'id categori tidak ditemukan'
+        })
+    }
+}
+
+const update = async (req, res, next) => {
+    try {
+        const {id} = req.params
+        const {name} = req.body
+
+        const result = await Categories.findOneAndUpdate(
+            {_id: id},
+            {name},
+            {new: true, runValidators: true}
+        )
+
+        res.status(200).json({
+            data: result,
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const destroy = async (req, res, next) => {
+    try {
+        const {id} = req.params
+        const result = await Categories.findByIdAndDelete(id)
+
+        res.status(200).json({
+            data: result,
+        })
+
     } catch (error) {
         next(error)
     }
@@ -40,5 +76,7 @@ const find = async (req, res, next) => {
 module.exports = {
     create,
     index,
-    find
+    find,
+    update,
+    destroy
 }
